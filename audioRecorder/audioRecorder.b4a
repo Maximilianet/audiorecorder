@@ -1,0 +1,107 @@
+﻿Version=2.52
+IconFile=
+NumberOfModules=0
+Package=b4a.example
+DoNotOverwriteManifest=False
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~
+UserTypesHint=
+NumberOfFiles=1
+File1=main.bal
+NumberOfLibraries=2
+Library1=audiorecorder
+Library2=core
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: Voice Recorder
+	#VersionCode: 1
+	#VersionName: 
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+
+End Sub
+
+Sub Globals
+	'These global variables will be redeclared each time the activity is created.
+	'These variables can only be accessed from this module.
+Dim AR As AudioRecorder
+
+	Dim imgPlay As ImageView
+	Dim imgPrep As ImageView
+	Dim imgStart As ImageView
+	Dim imgStop As ImageView
+	Dim imgExit As ImageView
+	Dim imgRecord As ImageView
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	'Do not forget to load the layout file created with the visual designer. For example:
+	If FirstTime Then
+		AR.Initialize()
+	End If
+	Activity.LoadLayout("main")
+	
+imgStop.Enabled = False
+imgStart.Enabled = False
+
+imgPlay.Visible = True
+imgRecord.Visible = False
+imgPrep.Enabled = True
+End Sub
+
+Sub Activity_Resume
+
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+
+Sub imgStart_Click
+	ToastMessageShow("Recording started.",False)
+AR.Start
+imgStop.Enabled = True
+
+imgPlay.Visible = False
+imgRecord.Visible = True
+imgStart.Enabled = False
+End Sub
+Sub imgPrep_Click
+	ToastMessageShow("Preparing the Voice Recorder.",False)
+AR.AudioSource = AR.AS_MIC
+AR.OutputFormat = AR.OF_THREE_GPP
+AR.AudioEncoder = AR.AE_AMR_NB
+AR.setOutputFile(File.DirDefaultExternal,"VoiceRecord.wav")
+AR.prepare()
+imgStop.Enabled = False
+imgStart.Enabled = True
+
+imgPlay.Visible = True
+imgRecord.Visible = False
+imgPrep.Enabled = False
+ToastMessageShow("Voice Recorder is ready to record.",False)
+
+End Sub
+Sub imgStop_Click
+	ToastMessageShow("Recording stopped.",False)
+AR.Stop
+imgPlay.Visible = True
+imgRecord.Visible = False
+imgStart.Enabled = False
+imgStop.Enabled = False
+imgPrep.Enabled = True
+End Sub
+Sub imgExit_Click
+	Activity.Finish
+End Sub
